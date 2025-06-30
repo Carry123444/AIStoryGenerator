@@ -1,12 +1,4 @@
-# Install required packages
-!pip install -q torch transformers accelerate bitsandbytes streamlit pyngrok huggingface_hub
 
-# Authenticate with Hugging Face
-from huggingface_hub import notebook_login
-notebook_login()
-
-# Create the Streamlit app file
-streamlit_code = '''
 import streamlit as st
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 import torch
@@ -90,45 +82,3 @@ def main():
                         full_story,
                         file_name="complete_story.txt"
                     )
-
-if __name__ == "__main__":
-    main()
-'''
-
-with open('story_generator.py', 'w') as f:
-    f.write(streamlit_code)
-
-# Install and configure ngrok
-!pip install -q pyngrok
-!ngrok authtoken 2z5YAOI5BcudjbzDofge1D0L1Y1_4N2FyLYT344Ystjuzo6Ev  
-
-# Launch Streamlit with ngrok tunnel
-import subprocess
-import threading
-import time
-from pyngrok import ngrok
-
-def run_streamlit():
-    subprocess.run([
-        "streamlit",
-        "run",
-        "story_generator.py",
-        "--server.port", "8501",
-        "--server.headless", "true"
-    ])
-
-# Start Streamlit in background
-thread = threading.Thread(target=run_streamlit, daemon=True)
-thread.start()
-
-# Wait for Streamlit to initialize
-time.sleep(8)
-
-# Create ngrok tunnel
-try:
-    public_url = ngrok.connect(addr="8501", bind_tls=True)
-    print("\\n Your AI Story Generator is live at:", public_url.public_url)
-except Exception as e:
-    print(f"Error: {e}\\nTrying port 8502...")
-    public_url = ngrok.connect(addr="8502", bind_tls=True)
-    print(" Backup URL:", public_url.public_url)
