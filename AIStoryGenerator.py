@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-v0.1"
-API_TOKEN = "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"
+API_TOKEN = ""
 
 def query(payload):
     headers = {"Authorization": f"Bearer {API_TOKEN}"}
