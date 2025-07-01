@@ -22,7 +22,7 @@ def generate_story(prompt, model):
 
 # Streamlit UI
 st.set_page_config(page_title="Flash Story Generator")
-st.title("✨ AI Story Generator(Using Gemini)")
+st.title("✨ AI Story Generator")
 
 prompt = st.text_area("Enter your story prompt:", placeholder="e.g., A futuristic detective solving a case in a neon-lit city, "
                 "a talking animal embarking on a magical adventure, "
