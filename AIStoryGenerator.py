@@ -34,8 +34,8 @@ genai.configure(api_key=API_KEY)
 # Initialize the Generative Model
 # 'gemini-pro' is recommended for text generation tasks and is generally
 # available on the free tier.
-model = genai.GenerativeModel('gemini-pro')
 
+model = genai.GenerativeModel('gemini-2.0-flash')
 # --- 2. Streamlit App User Interface (UI) ---
 
 # Set basic page configuration for the Streamlit app
