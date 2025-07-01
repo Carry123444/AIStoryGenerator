@@ -1,40 +1,22 @@
 import streamlit as st
-import requests
+import google.generativeai as genai
 
-API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-v0.1"
-API_TOKEN = ""
+# 1. Get free API key: https://ai.google.dev/
+genai.configure(api_key="AIzaSyD3uUjIem0llLUwcs0qybigPdU3nyFrLpA")
 
-def query(payload):
-    headers = {"Authorization": f"Bearer {API_TOKEN}"}
-    response = requests.post(API_URL, headers=headers, json=payload)
-    return response.json()
-
-def main():
-    st.title("✨ AI Story Generator (Mistral-7B)")
-    
-    prompt = st.text_area(
-        "Enter your story prompt:", 
-        placeholder="e.g., A girl who wants to be a singer"
+def generate_story(prompt):
+    model = genai.GenerativeModel('gemini-pro')
+    response = model.generate_content(
+        f"Write a 200-word engaging story about: {prompt}\n"
+        "- Include 3 paragraphs\n"
+        "- Add sensory details\n"
+        "- End with a twist"
     )
-    
-    if st.button("Generate Story"):
-        if not prompt.strip():
-            st.warning("Please enter a prompt!")
-        else:
-            with st.spinner("Generating..."):
-                formatted_prompt = f"Write a complete 250-word story about: {prompt}"
-                output = query({
-                    "inputs": formatted_prompt,
-                    "parameters": {
-                        "max_new_tokens": 300,
-                        "temperature": 0.7
-                    }
-                })
-                
-                if isinstance(output, list) and len(output) > 0:
-                    st.write(output[0]['generated_text'])
-                else:
-                    st.error("Failed to generate story. Try again later.")
+    return response.text
 
-if __name__ == "__main__":
-    main()
+# Streamlit UI
+st.title("✨ AI Story Generator (Gemini)")
+prompt = st.text_input("Enter your prompt:", "")
+
+if st.button("Generate"):
+    st.write(generate_story(prompt))
