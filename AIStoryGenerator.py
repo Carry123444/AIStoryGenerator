@@ -4,6 +4,7 @@ import google.generativeai as genai
 # Setup
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel('gemini-2.0-flash')
+MODEL_NAME = "gemini-2.0-flash"
 
 def generate_story(prompt, model):
     response = model.generate_content(
@@ -23,7 +24,10 @@ def generate_story(prompt, model):
 st.set_page_config(page_title="Flash Story Generator")
 st.title("✨ AI Story Generator(Using Gemini)")
 
-prompt = st.text_area("Enter your story prompt:", placeholder="e.g., A detective solving a mystery...")
+prompt = st.text_area("Enter your story prompt:", placeholder="e.g., A futuristic detective solving a case in a neon-lit city, "
+                "a talking animal embarking on a magical adventure, "
+                "a historical mystery set in ancient Rome..."
+)
 
 if st.button("✨ Generate Story"):
     with st.spinner("Crafting your story..."):
