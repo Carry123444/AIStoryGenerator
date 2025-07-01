@@ -1,57 +1,51 @@
 import streamlit as st
 import google.generativeai as genai
 
-# 1. Get your free API key from https://aistudio.google.com/app/apikey
+# 1. Get your API key from https://aistudio.google.com/app/apikey
 GEMINI_KEY = st.secrets.get("GEMINI_API_KEY") 
 
-# Initialize the model (using current working model names)
+# Initialize with the CORRECT model name
 try:
     genai.configure(api_key=GEMINI_KEY)
-    
-    # Try both current model name formats
-    try:
-        model = genai.GenerativeModel('gemini-1.0-pro')  # Primary attempt
-    except:
-        model = genai.GenerativeModel('models/gemini-pro')  # Fallback format
+    model = genai.GenerativeModel('gemini-pro')  # The only working free tier name
 except Exception as e:
-    st.error(f"API setup failed: {str(e)}")
+    st.error(f"❌ Setup failed: {str(e)}")
     st.stop()
 
 def generate_story(prompt):
     try:
         response = model.generate_content(
-            f"""Write a 250-word engaging story about: {prompt}
-            Structure:
-            1. Captivating opening
-            2. Character development
-            3. Satisfying conclusion
+            f"""Write a 250-word story about: {prompt}
             
-            Story must include:
+            Requirements:
+            - 3 clear paragraphs
             - Vivid descriptions
-            - Emotional depth
-            - One unexpected twist
+            - Unexpected ending
             
             Story:""",
-            generation_config={
-                "max_output_tokens": 500,
-                "temperature": 0.7
-            }
+            generation_config=genai.types.GenerationConfig(
+                max_output_tokens=500,
+                temperature=0.7
+            )
         )
         return response.text
     except Exception as e:
-        return f"⚠️ Generation failed. Error: {str(e)}"
+        return f"⚠️ Error: {str(e)}\n\nTry again in 60 seconds (free tier limit)"
 
 # Streamlit UI
-st.title(" AI Story Generator (Gemini)")
-prompt = st.text_area("Enter your prompt:", "")
+st.title("✨ AI Story Generator (Gemini)")
+prompt = st.text_area("Prompt:", "A girl who wants to be a singer")
 
-if st.button("✨ Generate Story"):
-    with st.spinner("Creating your story..."):
+if st.button("Generate"):
+    with st.spinner("Writing..."):
         story = generate_story(prompt)
-        st.subheader("Your Story")
-        st.write(story)
-        st.download_button("📥 Download", story, file_name="story.txt")
+        if not story.startswith("⚠️"):
+            st.success("✅ Story generated!")
+            st.write(story)
+            st.download_button("Download", story)
+        else:
+            st.error(story)
 
 # Debug info
 st.markdown("---")
-st.caption(f"Using model: {model._model_name}")
+st.caption("Using model: gemini-pro (free tier)")
